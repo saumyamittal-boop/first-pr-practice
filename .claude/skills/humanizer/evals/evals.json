@@ -1,0 +1,41 @@
+{
+  "skill_name": "humanizer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "can you humanize this before i post it on linkedin: \"I'm thrilled to announce that I've embarked on an exciting new journey as a Junior Data Analyst at Brightline Health! This role represents a pivotal moment in my career, allowing me to leverage my passion for data-driven insights while fostering meaningful impact. I'm deeply grateful to my mentors and the vibrant community that has supported me along the way. Here's to new beginnings! 🚀\"",
+      "expected_output": "A shorter first-person post that keeps the facts (new role, company, thanks to mentors), drops the puffery and emoji, invents nothing, and has no preamble.",
+      "files": [],
+      "assertions": [
+        "scan_tells.py reports 0 fix-level hits on the output",
+        "Keeps the job title and company name",
+        "Adds no facts that were not in the original",
+        "No preamble such as 'Here's a more natural version'"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "write a short email to my landlord, the heating in my flat (4B) has been broken since last monday and it's getting cold. i already texted him on wednesday and nothing happened",
+      "expected_output": "A short, direct email with the flat number, how long the heating has been broken, the earlier text, and a clear request. No placeholders and no filler.",
+      "files": [],
+      "assertions": [
+        "scan_tells.py reports 0 fix-level hits on the output",
+        "Mentions flat 4B, last Monday and the Wednesday text",
+        "Makes a clear request for a repair",
+        "Contains no [placeholder] text"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "add a section to my README explaining what a pull request is, for people who've never used github",
+      "expected_output": "A README section in sentence case that explains pull requests in plain language, as prose rather than bold-label bullets.",
+      "files": ["README.md"],
+      "assertions": [
+        "scan_tells.py reports 0 fix-level hits on the output",
+        "Heading is sentence case",
+        "Explains branch, opening the PR, review and merge",
+        "No bold-label bullet list"
+      ]
+    }
+  ]
+}
