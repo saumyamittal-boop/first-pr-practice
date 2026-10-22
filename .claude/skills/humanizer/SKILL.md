@@ -1,6 +1,6 @@
 ---
 name: humanizer
-description: Write and rewrite text so it reads like a person wrote it, free of the patterns that give away AI-generated writing (the full catalog from Wikipedia's "Signs of AI writing"). Use this for any prose the user will read, send or publish, including chat replies, emails, messages, social posts, bios, cover letters, essays, READMEs, docs, commit messages and PR descriptions. Also use it whenever the user asks to humanize text, de-AI it, make it sound less robotic or less like ChatGPT, strip AI tells, or pastes a draft and asks to clean it up or make it sound natural, even if they never say "humanize".
+description: Write and rewrite text so it reads like a person wrote it, free of the patterns that give away AI-generated writing (the full catalog from Wikipedia's "Signs of AI writing"). Use this for any prose the user will read, send or publish, including chat replies, emails, messages, social posts, bios, cover letters, essays, READMEs, docs, commit messages and PR descriptions. Also use it whenever the user asks to humanize text, de-AI it, make it sound less robotic or less like ChatGPT, strip AI tells, or pastes a draft and asks to clean it up or make it sound natural, even if they never say "humanize". Also use it to revise an academic paper, thesis or essay that an AI-detection report such as Turnitin has flagged, keeping every concept, citation, number and sentence.
 ---
 
 # Humanizer
@@ -76,11 +76,35 @@ These are the tells. Keep every one out of every kind of output. Don't dodge the
 When the user pastes text to humanize, or asks you to clean something up:
 
 1. Read the whole thing and work out what it actually claims. Keep every real fact, name, number and link.
-2. Cut the filler: significance claims, puffery, "-ing" tails, vague attributions, recaps. If a sentence has nothing left once the filler is gone, delete it.
+2. Cut the filler: significance claims, puffery, "-ing" tails, vague attributions, recaps. If a sentence has nothing left once the filler is gone, delete it. The exception is an academic paper under the rules below, where the sentence gets rewritten to say something instead.
 3. Don't invent facts to replace vague ones. If the original says "renowned for its rich history" and gives no history, the honest rewrite is shorter. If real specifics would help, ask for them in one line after the rewrite.
 4. Keep the author's voice, register and point of view. First person stays first person. British spelling stays British.
 5. Fix real errors (typos, grammar) while you're there.
 6. Give the rewritten text by itself. No "Here's a more natural version", and no list of changes unless the user asks for one.
+
+## Academic papers and AI-detection reports
+
+When the user hands over a research paper, thesis chapter or essay to revise, especially one that Turnitin or another detector has flagged, read `references/academic-papers.md` first. It has the research evidence, the revision moves ranked by how well they're supported, and worked examples. In short:
+
+- The hard rules beat everything else in this file:
+  - Keep every concept and claim at its original strength.
+  - Keep every in-text citation, with the same author, year and count.
+  - Keep every number exactly as written.
+  - Keep every sentence. A sentence may be split into two but never dropped or merged. A sentence that is only scaffolding gets rewritten to say something.
+  - Leave references, tables, equations, captions and headings alone unless the user asks.
+- The moves with the strongest evidence:
+  - Use finite clauses instead of trailing "-ing" clauses.
+  - Use verbs instead of nominalizations.
+  - Split coordination chains and dense sentences.
+  - Use subordination that carries real reasoning.
+  - Tie sentences to the paper's own tables, figures and sections.
+- Never use character tricks, inserted errors, synonym spinning or humanizer tools. They hide the text instead of improving it, they damage the paper, and detectors look for them.
+- Work one section at a time. When sub-agents are available, use Sonnet for web lookups and one Opus rewriter per section. An Opus reviewer at the top checks every paragraph against the original before anything goes into the document.
+- Check the result with three scripts:
+  - `check_preservation.py` must print PASS.
+  - `scan_tells.py` must show 0 "fix" hits outside quoted titles.
+  - `style_metrics.py` shows whether the features moved in the right direction.
+- Don't promise or predict a detector score. Text an AI revised is still AI-assisted, so if the user's venue requires disclosure, say so once.
 
 ## Checking your draft
 
@@ -93,6 +117,15 @@ python3 <this-skill-dir>/scripts/scan_tells.py < draft.txt
 ```
 
 It prints each hit with a line number. "fix" hits are almost always tells (em dashes, curly quotes, AI vocabulary, chat phrases, tool residue). "check" hits depend on context: "key" as in a door key is fine, and so is "rather than" in a plain comparison. Fix a hit by rewriting the sentence. Swapping one word for a synonym usually leaves the habit in place. Then run it again. Fenced code blocks and inline code are skipped.
+
+When you revise an existing document, check the old and new versions against each other as well:
+
+```bash
+python3 <this-skill-dir>/scripts/check_preservation.py original.docx revised.docx
+python3 <this-skill-dir>/scripts/style_metrics.py original.docx revised.docx
+```
+
+The first lists any in-text citation, number, technical term or sentence that went missing, and anything new that needs a second look. The second compares the two versions on the features described in `references/academic-papers.md`. Both read .docx or plain text.
 
 ## Edge cases
 

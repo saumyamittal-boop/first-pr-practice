@@ -29,12 +29,29 @@
       "id": 3,
       "prompt": "add a section to my README explaining what a pull request is, for people who've never used github",
       "expected_output": "A README section in sentence case that explains pull requests in plain language, as prose rather than bold-label bullets.",
-      "files": ["README.md"],
+      "files": [
+        "README.md"
+      ],
       "assertions": [
         "scan_tells.py reports 0 fix-level hits on the output",
         "Heading is sentence case",
         "Explains branch, opening the PR, review and merge",
         "No bold-label bullet list"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "here's my research paper, turnitin flagged the lit review and the conclusion as AI. rewrite those parts so they read like my own writing but don't change any concept or drop any citation or sentence",
+      "expected_output": "Revised paragraphs that keep every in-text citation, number, claim and sentence of the original, with fewer trailing -ing clauses and nominalizations, no detector-evasion tricks, and a reply that does not promise a detector score.",
+      "files": [
+        "paper.docx"
+      ],
+      "assertions": [
+        "check_preservation.py prints PASS for the original against the revision",
+        "scan_tells.py reports 0 fix-level hits on the revised paragraphs, quoted titles aside",
+        "style_metrics.py shows fewer trailing -ing clauses per 1,000 words than the original",
+        "No look-alike characters, invisible characters or deliberate misspellings",
+        "The reply does not predict a Turnitin score"
       ]
     }
   ]
